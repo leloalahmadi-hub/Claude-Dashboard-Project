@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة إدارة المشاريع</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- الشريط الجانبي -->
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <h1>لوحة إدارة المشاريع</h1>
+        <p>عرض ومتابعة حالة مشاريعك وأولوياتها ونسب إنجازها</p>
+      </div>
+
+      <nav class="sidebar__nav" aria-label="أقسام لوحة التحكم">
+        <button type="button" class="nav-tab active" data-view="overview">
+          <span class="nav-tab__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/></svg></span>
+          نظرة عامة
+        </button>
+        <button type="button" class="nav-tab" data-view="projects">
+          <span class="nav-tab__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+          المشاريع
+        </button>
+        <button type="button" class="nav-tab" data-view="managers">
+          <span class="nav-tab__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5M14.5 20c0-2.6-1.4-4.4-3.3-5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          المسؤولون
+        </button>
+        <button type="button" class="nav-tab" data-view="departments">
+          <span class="nav-tab__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="11" rx="1.5" stroke="currentColor" stroke-width="2"/><path d="M9 9V6a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v3" stroke="currentColor" stroke-width="2"/></svg></span>
+          الإدارات
+        </button>
+        <button type="button" class="nav-tab" data-view="analytics">
+          <span class="nav-tab__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M11 20V4M18 20v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          التحليلات
+        </button>
+      </nav>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+      <!-- الشريط العلوي -->
+      <header class="topbar">
+        <div class="topbar__titles">
+          <h2 id="topbar-title">نظرة عامة</h2>
+          <p id="topbar-date"></p>
+        </div>
+
+        <div class="topbar__actions">
+          <button type="button" class="topbar__btn" id="refresh-btn" aria-label="تحديث البيانات" title="تحديث">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 14-5.2M20 12a8 8 0 0 1-14 5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 4v4h-4M6 20v-4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="topbar__notif-wrap">
+            <button type="button" class="topbar__btn" id="notif-btn" aria-label="التنبيهات" title="التنبيهات">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 13 6 9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="topbar__badge hidden" id="notif-badge">0</span>
+            </button>
+
+            <div class="notif-dropdown hidden" id="notif-dropdown">
+              <div class="notif-dropdown__header">التنبيهات</div>
+              <div class="mini-list" id="notif-list"></div>
+            </div>
+          </div>
+
+          <button type="button" class="topbar__btn" id="theme-toggle-btn">
+            <span id="theme-toggle-icon"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ===== قسم نظرة عامة ===== -->
+      <section class="view" id="view-overview">
+        <div class="stats-grid" aria-label="إحصائيات المشاريع">
+          <div class="stat-card stat-card--total">
+            <div class="stat-card__top">
+              <span class="stat-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+              <span class="stat-card__label">إجمالي المشاريع</span>
+            </div>
+            <span class="stat-card__value" id="stat-total">0</span>
+            <span class="stat-card__sub" id="stat-total-sub">جميع المشاريع المسجلة</span>
+          </div>
+
+          <div class="stat-card stat-card--active">
+            <div class="stat-card__top">
+              <span class="stat-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l10-6.5-10-6.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+              <span class="stat-card__label">المشاريع النشطة</span>
+            </div>
+            <span class="stat-card__value" id="stat-active">0</span>
+            <span class="stat-card__sub" id="stat-active-sub">0% من الإجمالي</span>
+            <div class="stat-card__bar"><div class="stat-card__bar-fill" id="stat-active-bar" style="background: var(--color-active);"></div></div>
+          </div>
+
+          <div class="stat-card stat-card--completed">
+            <div class="stat-card__top">
+              <span class="stat-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="stat-card__label">المشاريع المكتملة</span>
+            </div>
+            <span class="stat-card__value" id="stat-completed">0</span>
+            <span class="stat-card__sub" id="stat-completed-sub">0% من الإجمالي</span>
+            <div class="stat-card__bar"><div class="stat-card__bar-fill" id="stat-completed-bar" style="background: var(--color-completed);"></div></div>
+          </div>
+
+          <div class="stat-card stat-card--late">
+            <div class="stat-card__top">
+              <span class="stat-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7.5v5l3.5 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="stat-card__label">المشاريع المتأخرة</span>
+            </div>
+            <span class="stat-card__value" id="stat-late">0</span>
+            <span class="stat-card__sub" id="stat-late-sub">لا يوجد تأخير حاليًا</span>
+            <div class="stat-card__bar"><div class="stat-card__bar-fill" id="stat-late-bar" style="background: var(--color-late);"></div></div>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="panel">
+            <h2>أحدث المشاريع</h2>
+            <div class="mini-list" id="latest-projects-container"></div>
+          </div>
+
+          <div class="overview-side">
+            <div class="panel">
+              <h2>تنبيهات سريعة</h2>
+              <div class="mini-list" id="quick-alerts-container"></div>
+            </div>
+
+            <div class="panel">
+              <h2>توزيع المشاريع حسب الحالة</h2>
+              <div class="distribution-list" id="status-distribution"></div>
+            </div>
+
+            <div class="panel">
+              <h2>توزيع المشاريع حسب الإدارة</h2>
+              <div class="distribution-list" id="department-distribution"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== قسم المشاريع ===== -->
+      <section class="view hidden" id="view-projects">
+        <div class="view-header">
+          <h2>المشاريع</h2>
+          <button type="button" class="btn btn--primary" id="add-project-btn">
+            <span class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </span>
+            إضافة مشروع
+          </button>
+        </div>
+
+        <section class="toolbar" aria-label="البحث والفلاتر">
+          <div class="toolbar__field toolbar__field--search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="toolbar__search-icon" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="text" id="search-input" placeholder="ابحث باسم المشروع أو المسؤول..." />
+          </div>
+
+          <select id="status-filter" class="toolbar__select">
+            <option value="">كل الحالات</option>
+            <option value="نشط">نشط</option>
+            <option value="مكتمل">مكتمل</option>
+            <option value="متأخر">متأخر</option>
+            <option value="قيد التخطيط">قيد التخطيط</option>
+          </select>
+
+          <select id="priority-filter" class="toolbar__select">
+            <option value="">كل الأولويات</option>
+            <option value="عالية">عالية</option>
+            <option value="متوسطة">متوسطة</option>
+            <option value="منخفضة">منخفضة</option>
+          </select>
+
+          <button type="button" class="btn btn--ghost" id="reset-filters-btn">إعادة ضبط</button>
+        </section>
+
+        <div class="projects-grid" id="projects-container"></div>
+
+        <div class="empty-state hidden" id="empty-state">
+          <span class="empty-state__icon"><svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          <p>لا توجد مشاريع مطابقة</p>
+          <span>جرّب تعديل البحث أو الفلاتر، أو أضف مشروعًا جديدًا.</span>
+        </div>
+      </section>
+
+      <!-- ===== قسم المسؤولون ===== -->
+      <section class="view hidden" id="view-managers">
+        <div class="view-header">
+          <h2>المسؤولون</h2>
+        </div>
+
+        <div class="managers-grid" id="managers-container"></div>
+
+        <div class="panel">
+          <h2 id="manager-projects-title">اختر مسؤولًا لعرض مشاريعه</h2>
+          <div class="mini-list" id="manager-projects-container"></div>
+        </div>
+      </section>
+
+      <!-- ===== قسم الإدارات ===== -->
+      <section class="view hidden" id="view-departments">
+        <div class="panel add-department-panel">
+          <h2>إضافة إدارة جديدة</h2>
+          <p class="panel__hint">تصبح متاحة فورًا عند إنشاء أو تعديل أي مشروع</p>
+          <form class="add-department-row" id="add-department-form">
+            <input type="text" id="new-department-input" placeholder="اسم الإدارة الجديدة..." />
+            <button type="submit" class="btn btn--primary">
+              <span class="icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </span>
+              إضافة إدارة
+            </button>
+          </form>
+          <span class="form-error" id="error-department"></span>
+        </div>
+
+        <h2 class="section-title">الإدارات</h2>
+        <div class="departments-grid" id="departments-container"></div>
+      </section>
+
+      <!-- ===== قسم التحليلات ===== -->
+      <section class="view hidden" id="view-analytics">
+        <div class="analytics-stats">
+          <div class="mini-stat">
+            <span class="mini-stat__label">متوسط الإنجاز</span>
+            <span class="mini-stat__value" id="analytics-avg-progress">0%</span>
+          </div>
+          <div class="mini-stat mini-stat--late">
+            <span class="mini-stat__label">مشاريع متأخرة</span>
+            <span class="mini-stat__value" id="analytics-late-count">0</span>
+          </div>
+          <div class="mini-stat mini-stat--warning">
+            <span class="mini-stat__label">قريبة من التسليم</span>
+            <span class="mini-stat__value" id="analytics-near-count">0</span>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="panel">
+            <h2>توزيع المشاريع حسب الحالة</h2>
+            <div class="distribution-list" id="analytics-status-distribution"></div>
+          </div>
+          <div class="panel">
+            <h2>توزيع المشاريع حسب الأولوية</h2>
+            <div class="distribution-list" id="analytics-priority-distribution"></div>
+          </div>
+          <div class="panel">
+            <h2>توزيع المشاريع حسب الإدارة</h2>
+            <div class="distribution-list" id="analytics-department-distribution"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- نافذة إضافة/تعديل مشروع -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal__header">
+        <h2 id="modal-title">إضافة مشروع جديد</h2>
+        <button type="button" class="modal__close" id="close-modal-btn" aria-label="إغلاق">&times;</button>
+      </div>
+
+      <form id="project-form" novalidate>
+        <div class="form-group">
+          <label for="field-name">اسم المشروع</label>
+          <input type="text" id="field-name" required />
+          <span class="form-error" id="error-name"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-owner">المسؤول</label>
+          <input type="text" id="field-owner" required />
+          <span class="form-error" id="error-owner"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-description">وصف مختصر</label>
+          <textarea id="field-description" rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-status">الحالة</label>
+            <select id="field-status">
+              <option value="نشط">نشط</option>
+              <option value="مكتمل">مكتمل</option>
+              <option value="متأخر">متأخر</option>
+              <option value="قيد التخطيط">قيد التخطيط</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="field-priority">الأولوية</label>
+            <select id="field-priority">
+              <option value="عالية">عالية</option>
+              <option value="متوسطة">متوسطة</option>
+              <option value="منخفضة">منخفضة</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="field-department">الإدارة</label>
+          <select id="field-department"></select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-progress">نسبة الإنجاز (%)</label>
+            <input type="number" id="field-progress" min="0" max="100" step="1" value="0" required />
+            <span class="form-error" id="error-progress"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="field-dueDate">تاريخ التسليم</label>
+            <input type="date" id="field-dueDate" required />
+            <span class="form-error" id="error-dueDate"></span>
+          </div>
+        </div>
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" id="cancel-modal-btn">إلغاء</button>
+          <button type="submit" class="btn btn--primary" id="submit-btn">حفظ المشروع</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- نافذة تأكيد الحذف -->
+  <div class="modal-overlay hidden" id="confirm-overlay">
+    <div class="modal modal--small" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+      <div class="modal__header">
+        <h2 id="confirm-title">تأكيد الحذف</h2>
+      </div>
+      <p class="confirm-text">هل أنت متأكد من حذف هذا المشروع؟ لا يمكن التراجع عن هذا الإجراء.</p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" id="cancel-delete-btn">إلغاء</button>
+        <button type="button" class="btn btn--danger" id="confirm-delete-btn">حذف نهائي</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- إشعارات قصيرة -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="data.js"></script>
+  <script src="dataService.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

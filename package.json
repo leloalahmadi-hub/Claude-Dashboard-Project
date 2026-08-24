@@ -1,0 +1,10 @@
+{
+  "name": "project-dashboard-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "خادم خلفي بسيط (بدون مكتبات خارجية) يربط لوحة إدارة المشاريع بـ Airtable بأمان.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
